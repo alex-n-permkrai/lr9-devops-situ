@@ -1,0 +1,16 @@
+FROM python:3.12-slim
+
+RUN useradd --create-home --shell /bin/bash runner \
+    && mkdir -p /usr/local/http-server
+
+WORKDIR /usr/local/http-server
+
+COPY application.py index.html ./
+
+RUN chown -R runner:runner /usr/local/http-server
+
+EXPOSE 8000
+
+USER runner
+
+CMD ["python3", "-u", "/usr/local/http-server/application.py"]
