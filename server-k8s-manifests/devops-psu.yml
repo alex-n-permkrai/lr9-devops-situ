@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops-psu
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-psu
+  namespace: devops-psu
+  labels:
+    app: devops-psu
+    release-date: "initial"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-psu
+  template:
+    metadata:
+      labels:
+        app: devops-psu
+        svc: frontend
+        release-date: "initial"
+    spec:
+      containers:
+        - name: devops-psu-server
+          image: alexnpermkrai/devops-psu:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-devops
+  namespace: devops-psu
+  labels:
+    app: devops-psu
+spec:
+  type: LoadBalancer
+  selector:
+    app: devops-psu
+    svc: frontend
+  ports:
+    - port: 12345
+      targetPort: 8000
